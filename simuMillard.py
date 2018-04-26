@@ -18,6 +18,11 @@ def main():
     # np.savetxt("tmp_Results_Growth.csv", results_1, delimiter=",")
     # create_boxplot(results_1)
 
+    # print loading info
+    print('#' * 80)
+    print('BioApp v. 0.01')
+    print('#' * 80)
+
     # to get the tellurium version use
     print('te.__version__')
     print(te.__version__)
