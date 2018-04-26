@@ -1,4 +1,5 @@
 import tellurium as te
+import roadrunner as rr
 
 def main():
     # file = 'E_coli_Millard2016-L3V1.xml'
@@ -20,20 +21,28 @@ def main():
 
     # print loading info
     print('#' * 80)
-    print('BioApp v. 0.01')
+    print('BioApp version: 0.01')
     print('#' * 80)
 
-    # to get the tellurium version use
-    print('te.__version__')
-    print(te.__version__)
-    # or
-    print('te.getTelluriumVersion()')
-    print(te.getTelluriumVersion())
+    # # to get the tellurium version use
+    # print('te.__version__')
+    # print(te.__version__)
+    # # or
+    # print('te.getTelluriumVersion()')
+    # print(te.getTelluriumVersion())
+    #
+    # # to print the full version info use
+    # print('-' * 80)
+    # te.printVersionInfo()
+    # print('-' * 80)
 
-    # to print the full version info use
-    print('-' * 80)
-    te.printVersionInfo()
-    print('-' * 80)
+    #Main Program
+    filename = 'E_coli_Millard2016-L3V1.xml'
+    te.setDefaultPlottingEngine('matplotlib')
+    sbml_model = te.loadSBMLModel(filename)
+    r = rr.RoadRunner(sbml_model)
+    result = r.simulate()
+    r.plot(result)
 
 
 if __name__ == '__main__':
