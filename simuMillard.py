@@ -1,9 +1,9 @@
 import warnings
-import matplotlib as plt
 import tellurium as te
+import matplotlib.pyplot as plt
 warnings.filterwarnings('error')
 te.setDefaultPlottingEngine('matplotlib')
-plt.interactive(False)
+plt.interactive(True)
 
 
 def loadPModel(file):
@@ -84,7 +84,9 @@ def main():
     getInfo(rr)
     result = rr.simulate(0, 40, 500)
     rr.plot(result, show=False, loc=None, color='black', alpha=0.7)
+    plt.plot(result)
     te.show()
+    plt.show()
 
 
 if __name__ == '__main__':
