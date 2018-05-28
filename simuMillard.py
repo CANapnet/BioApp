@@ -1,95 +1,46 @@
 import re
 import warnings
-import roadrunner as rr
-import numpy as np
-import progressbar
-import pandas as pd
-import numpy as np
-import seaborn as sns
 import matplotlib
 import matplotlib.pyplot as plt
+import roadrunner as rr
+import numpy as np
+import pandas as pd
+import progressbar
+import multiprocessing
 
 warnings.filterwarnings('error')
 
 
-# te.setDefaultPlottingEngine('matplotlib')
-# plt.interactive(True)
-# mpl.interactive(True)
+def create_boxplot(m_growth, m_error, glc_vector, loadtype):
+    if loadtype == 0:
+        print('Care loadtype == 1!')
+        df1 = pd.DataFrame(m_growth, columns=glc_vector)
+        df2 = pd.DataFrame(m_error, columns=glc_vector)
+
+        df1.to_csv('Growth_M1.csv')
+        df2.to_csv('Error_M1.csv')
+    elif loadtype == 1:
+        df1 = pd.read_csv('Growth_M2.csv', index_col=0)
+        df2 = pd.read_csv('Error_M2.csv', index_col=0)
+        df3 = pd.DataFrame(0, index=np.arange(1, 5), columns=glc_vector)
+        # Get frequencies
+        df3_freq = df2.apply(pd.value_counts).fillna(0)
+        df4 = pd.DataFrame(df3_freq)
+        df5 = df4.T
+
+        # PLOTS #
+        df1.boxplot()
+        plt.xlabel('Glc FEED')
+        plt.ylabel('Growth rate h-1')
+        plt.savefig('Boxplot_GrowthRate.png')
+        df5.plot.bar()
+        plt.xlabel('Glc FEED')
+        plt.ylabel('Simulations')
+        plt.show()
+        plt.savefig('Counts_Errors.png')
 
 
-def create_bx(m_growth, m_error, glc_vector):
-    ##df1 = pd.read_csv("tmp_Results_Growth2.csv", index_col=0)
-    #                   names=[0.00, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50, 0.55, 0.60, 0.65, 0.70,
-    #                          0.75, 0.80, 0.85, 0.90, 0.95, 1.00, 0.23])
-    # df2 = pd.DataFrame(df1, columns=[0.00, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50, 0.55, 0.60,
-    #                                  0.65, 0.70, 0.75, 0.80, 0.85, 0.90, 0.95, 1.00, 0.23])
-
-    # df1 = pd.DataFrame(m_growth, columns=[0.00, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50, 0.55, 0.60,
-    #                                       0.65, 0.70, 0.75, 0.80, 0.85, 0.90, 0.95, 1.00, 0.23])
-    # df2 = pd.DataFrame(m_error, columns=[0.00, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50, 0.55, 0.60,
-    #                                      0.65, 0.70, 0.75, 0.80, 0.85, 0.90, 0.95, 1.00, 0.23])
-
-    # df1.to_csv('Growth_M.csv')
-    # df2.to_csv('Error_M.csv')
-
-    df1 = pd.read_csv('Growth_M.csv', index_col=0)
-    df2 = pd.read_csv('Error_M.csv', index_col=0)
-
-    # fig, axes = plt.subplots(nrows=2, ncols=2)
-    # df2['freq'] = df2.groupby('')['0.0'].transform('count')
-    errors = [1, 2, 3, 4]
-    zero_freq = np.zeros(shape=(4, 22), dtype=int)
-    df3 = pd.DataFrame(zero_freq, columns=[0.00, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50, 0.55, 0.60,
-                                           0.65, 0.70, 0.75, 0.80, 0.85, 0.90, 0.95, 1.00, 0.23])
-    df4 = pd.DataFrame(0, index=np.arange(1, 5), columns=[0.00, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45,
-                                                          0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85, 0.90, 0.95,
-                                                          1.00, 0.23])
-    # print(df3)
-    data_freq = df2.apply(pd.value_counts).fillna(0)
-    df5 = pd.DataFrame(data_freq)
-    # print(df5)
-
-    # for column in df2.columns[0:]:
-    #     # counts1 = df2[column].value_counts().to_dict()
-    #     # counts2 = df2[column].value_counts().reset_index()
-    #     # counts3 = df2[column].value_counts('2')
-    #     # df4 = pd.crosstab(df2[index], df2[column])
-    #     tria = df2[column].value_counts().index('3')
-    #     print(tria)
-
-    # df2.apply(pd.value_counts).fillna(0)
-    # df2.Color.value_counts().reset_index().rename(columns={'index': 'Color', 0: 'count'})
-
-    df1.boxplot()
-    plt.xlabel('Glc FEED')
-    plt.ylabel('Growth rate h-1')
-    plt.savefig('Boxplot_GrowthRate.png')
-    # df5.plot.bar(ax=axes[1, 0])
-    df6 = df5.T
-    df6.plot.bar()
-    plt.xlabel('Glc FEED')
-    plt.ylabel('Simulations')
-    plt.show()
-    plt.savefig('Counts_Errors.png')
-    # print(df1)
-    # print(df2)
-
-    # nan_values = df1.isnull().sum()
-    # print(nan_values)
-    # # plt.boxplot(df1)
-    # plt.bar(nan_values)
-    # plt.show()
-
-
-def create_boxplot():
-    df1 = pd.read_csv("tmp_Results_Growth2.csv", index_col=0)
-
-    nan_values = df1.isnull().sum()
-    print(nan_values)
-    print(df1)
-
-
-def runParamSimu(sbml_prom, glc_vector, vmax_matrix, vmax_list):
+def runParamSimu(sbml_prom, glc_vector, vmax_matrix, vmax_list, logfile):
     vlist = np.asarray(vmax_list)
     vmax_ids = vlist[:, 0]
     bar = progressB(len(glc_vector) * vmax_matrix.shape[0])
@@ -99,31 +50,37 @@ def runParamSimu(sbml_prom, glc_vector, vmax_matrix, vmax_list):
     matrix_errors = np.zeros((vmax_matrix.shape[0], len(glc_vector)), dtype=int)
     for idx_glc, tmp_glc_value in enumerate(glc_vector):
         for idx_vmax, tmp_vmax_vector in enumerate(vmax_matrix):
-            r1 = rr.RoadRunner(sbml_prom)
+            r2 = rr.RoadRunner(sbml_prom)
             # rr.resetAll()
             # rr.reset()
-            # print("BEFORE :\tFEED:\t", r1.model['FEED'], "\tGLC_feed:\t", r1.model['GLC_feed'], "\tRPI VMAX:\t",
-            #       r1.model['RPI_Vmax'])
-            r1.model['FEED'] = tmp_glc_value
+            str_BEFORE = ["BEFORE :\tFEED:\t", r2.model['FEED'], "\tGLC_feed:\t", r2.model['GLC_feed'], "\tRPI VMAX:\t",
+                          r2.model['RPI_Vmax']]
+            logfile.write(str(str_BEFORE))
+            # print("BEFORE :\tFEED:\t", r2.model['FEED'], "\tGLC_feed:\t", r2.model['GLC_feed'], "\tRPI VMAX:\t",
+            #       r2.model['RPI_Vmax'])
+            r2.model['FEED'] = tmp_glc_value
             for i, tmp_vmax_id in enumerate(vmax_ids):
-                r1.model[tmp_vmax_id] = tmp_vmax_vector[i]
+                r2.model[tmp_vmax_id] = tmp_vmax_vector[i]
             time_0 = 0
             time_f = 200 * 3600
             num_points = 1000
-            # print("AFTER :\tFEED:\t", r1.model['FEED'], "\tGLC_feed:\t", r1.model['GLC_feed'], "\tRPI VMAX:\t",
-            #       r1.model['RPI_Vmax'])
-            r1.getIntegrator().relative_tolerance = 1e-8
-            r1.getIntegrator().absolute_tolerance = 1e-10
+            str_AFTER = ["AFTER :\tFEED:\t", r2.model['FEED'], "\tGLC_feed:\t", r2.model['GLC_feed'], "\tRPI VMAX:\t",
+                          r2.model['RPI_Vmax']]
+            logfile.write(str(str_AFTER))
+            # print("AFTER :\tFEED:\t", r2.model['FEED'], "\tGLC_feed:\t", r2.model['GLC_feed'], "\tRPI VMAX:\t",
+            #       r2.model['RPI_Vmax'])
+            r2.getIntegrator().relative_tolerance = 1e-8
+            r2.getIntegrator().absolute_tolerance = 1e-10
             bar_i = bar_i + 1
             bar.update(bar_i)
             try:
-                growth_idx = r1.model.getReactionIds().index("GROWTH")
-                glc_feed_idx = r1.model.getReactionIds().index("GLC_feed")
-                glc_xch_idx = r1.model.getReactionIds().index("XCH_GLC")
-                results1 = r1.simulate(time_0, time_f, num_points)
-                growth_rate = r1.model.getReactionRates()[growth_idx]
-                glc_feed_rate = r1.model.getReactionRates()[glc_feed_idx]
-                glc_xch_rate = r1.model.getReactionRates()[glc_xch_idx]
+                growth_idx = r2.model.getReactionIds().index("GROWTH")
+                glc_feed_idx = r2.model.getReactionIds().index("GLC_feed")
+                glc_xch_idx = r2.model.getReactionIds().index("XCH_GLC")
+                results1 = r2.simulate(time_0, time_f, num_points)
+                growth_rate = r2.model.getReactionRates()[growth_idx]
+                glc_feed_rate = r2.model.getReactionRates()[glc_feed_idx]
+                glc_xch_rate = r2.model.getReactionRates()[glc_xch_idx]
                 check_range = check_range_of_rates(glc_feed_rate, glc_xch_rate)
                 check_growth = check_gr(growth_rate)
                 if check_range == 1:
@@ -172,13 +129,6 @@ def check_range_of_rates(feed, xch):
         return check
     else:
         return check
-
-
-def makeGlcVector():
-    glc_vector = [0.00, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80,
-                  0.85, 0.90, 0.95, 1.00, 0.23]
-    # glc_vector_reverse = glc_vector[::-1]
-    return glc_vector
 
 
 def createVmaxMatrix(vmax_list, num_of_random_vmaxes):
@@ -259,24 +209,36 @@ def main():
     print('#' * 80)
     print('BioApp version: 0.01')
     print('#' * 80)
-
     # Main Program
     # Manual Settings  **CARE**
+    # START OF SETTINGS #
+    # loadtype = 0 to run simulations | loadtype = 1 force to load previous computed simulations
+    loadtype = 0
+    # Number of simulations = num_of_random_vmaxes * 22(=len(glc_vector)) | defaults value 100: 2200 = 100 x 22
+    num_of_random_vmaxes = 10
+    # The name of the model file
     filename = 'E_coli_Millard2016-L3V1.xml'
-    # # Number of simulations = num_of_random_vmaxes * 22(=len(glc_vector))
-    num_of_random_vmaxes = 100
+    log_filepath = './REPORT_BEFORE_AFTER.txt'
+    log_file = open(log_filepath, 'w')
+    glc_vector = [0.00, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50,
+                  0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85, 0.90, 0.95, 1.00, 0.23]
+    # END OF SETTINGS #
 
-    sbml_prom = loadPModel(filename)  # loadModelAndPromoteToGlobalParameters(filename)
-    r1 = rr.RoadRunner(sbml_prom)
+    # All parameters of the smbl get promoted to globals, in order to change them
+    promoted_sbml = loadPModel(filename)
+    r1 = rr.RoadRunner(promoted_sbml)
     model = r1.model
     vmax_list = getVmaxIdsAndValues(model)
     vmax_matrix = createVmaxMatrix(vmax_list, num_of_random_vmaxes)
-    glc_vector = makeGlcVector()
 
-    # results1, results2 = runParamSimu(sbml_prom, glc_vector, vmax_matrix, vmax_list)
-    results1 = []
-    results2 = []
-    create_bx(results1, results2, glc_vector)
+    if loadtype == 0:
+        matrix_growth, matrix_error = runParamSimu(promoted_sbml, glc_vector, vmax_matrix, vmax_list, log_file)
+    elif loadtype == 1:
+        matrix_growth = []
+        matrix_error = []
+
+    log_file.close()
+    create_boxplot(matrix_growth, matrix_error, glc_vector, loadtype)
 
 
 if __name__ == '__main__':
